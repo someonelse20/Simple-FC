@@ -9,7 +9,7 @@
 		(in_pos_files yes)
 		(duplicate_pin_numbers_are_jumpers no)
 		(property "Reference" "U"
-			(at -6.35 10.16 0)
+			(at -7.62 10.16 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -20,7 +20,7 @@
 			)
 		)
 		(property "Value" "BMP384"
-			(at 6.35 10.16 0)
+			(at 5.08 10.16 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -31,7 +31,7 @@
 			)
 		)
 		(property "Footprint" "Package_LGA:ST_HLGA-10_2x2mm_P0.5mm_LayoutBorder3x2y"
-			(at 0 -17.78 0)
+			(at -1.27 -17.78 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(hide yes)
@@ -42,7 +42,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp384-ds003.pdf"
-			(at 1.27 0 0)
+			(at 0 0 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(hide yes)
@@ -53,7 +53,7 @@
 			)
 		)
 		(property "Description" "Absolute Barometric Pressure Sensor, LGA-8"
-			(at 1.27 0 0)
+			(at 0 0 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(hide yes)
@@ -87,8 +87,8 @@
 		)
 		(symbol "BMP384_0_1"
 			(rectangle
-				(start -7.62 7.62)
-				(end 7.62 -7.62)
+				(start -8.89 7.62)
+				(end 8.89 -7.62)
 				(stroke
 					(width 0.254)
 					(type default)
@@ -100,7 +100,7 @@
 		)
 		(symbol "BMP384_1_1"
 			(pin power_in line
-				(at 2.54 10.16 270)
+				(at 3.81 10.16 270)
 				(length 2.54)
 				(name "VDDIO"
 					(effects
@@ -118,7 +118,7 @@
 				)
 			)
 			(pin input line
-				(at -10.16 5.08 0)
+				(at -11.43 5.08 0)
 				(length 2.54)
 				(name "SCK/SCL"
 					(effects
@@ -136,7 +136,7 @@
 				)
 			)
 			(pin power_in line
-				(at 2.54 -10.16 90)
+				(at 3.81 -10.16 90)
 				(length 2.54)
 				(name "GND"
 					(effects
@@ -154,7 +154,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -10.16 2.54 0)
+				(at -11.43 2.54 0)
 				(length 2.54)
 				(name "SDI/SDA"
 					(effects
@@ -172,7 +172,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -10.16 0 0)
+				(at -11.43 0 0)
 				(length 2.54)
 				(name "SDO/SA0"
 					(effects
@@ -190,7 +190,7 @@
 				)
 			)
 			(pin input line
-				(at -10.16 -2.54 0)
+				(at -11.43 -2.54 0)
 				(length 2.54)
 				(name "CSB"
 					(effects
@@ -208,7 +208,7 @@
 				)
 			)
 			(pin output line
-				(at -10.16 -5.08 0)
+				(at -11.43 -5.08 0)
 				(length 2.54)
 				(name "INT"
 					(effects
@@ -226,7 +226,7 @@
 				)
 			)
 			(pin power_in line
-				(at 5.08 10.16 270)
+				(at 6.35 10.16 270)
 				(length 2.54)
 				(name "VDD"
 					(effects
@@ -244,7 +244,7 @@
 				)
 			)
 			(pin power_in line
-				(at 5.08 -10.16 90)
+				(at 6.35 -10.16 90)
 				(length 2.54)
 				(name "GND"
 					(effects
