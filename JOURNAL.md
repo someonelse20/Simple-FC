@@ -68,5 +68,5 @@ The default kicad symbol was making it confusing so I changed it to be closer to
 I also changed the regulator circuit to a pull down resistor so it defaults to low power mode but can be toggled with a gpio.
 ![TPS63000 circuit](images/TPS63000_circuit-2.png)
 
-**1h**
+**Total time spent: 1 hour**
 
