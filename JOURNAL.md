@@ -40,9 +40,7 @@ I wasn't sure how to wire up the micro sd card at first since the rp2350 can onl
 
 **Total time spent: 1 hour**
 
-### October 8: Switched to Buck-Boost Regulator
-
-# Switched to Buck-Boost Regulator
+# October 8: Switched to Buck-Boost Regulator
 
 ### Why the switch
 I was thinking more about how this would work with other boards and I decided it needs a wider input voltage range and a higher output current so it can power other boards as well. So I went looking for a buck-boost regulator and found the TPS631000.
