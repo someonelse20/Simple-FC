@@ -1,7 +1,7 @@
 ---
 title: "Simple FC"
 author: "Someonelse"
-description: "A RP2350 based flight controller with an IMU and barometer"
+description: "An RP2350 based flight controller with an IMU and barometer"
 created_at: "2026-10-7"
 ---
 
