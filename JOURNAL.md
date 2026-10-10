@@ -93,3 +93,20 @@ The flight controller needs pinouts so it can communicate with other boards. I a
 ![Pin headers](images/header_circuit-1.png)
 
 **Total time spent: 2 hours**
+
+# October 10: Drafted PCB layout
+
+I added footprints to everything and opened up the pcb editor. I first tried making the headers jst but it wouldn't fit on the board well and I would have to put things on both sides.
+
+![PCB layout 1](images/pcb-1.png)
+
+I switched over to simple pin headers and was able to get everything to fit better.
+
+![PCB layout 2](images/pcb-2.png)
+
+I then started adding the rest of the chips and to make things fit I also had to move the mounting holes closer to the corners. I tried to place the magnetic sensor (the one in the corner near the micro sd) away from the power circuit to reduce noise.
+
+![PCB layout 3](images/pcb-3.png)
+
+**Total time spent: 1.5 hours**
+
