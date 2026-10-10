@@ -5,7 +5,7 @@ description: "An RP2350 based flight controller with an IMU and barometer"
 created_at: "2026-10-7"
 ---
 
-# 2026-10-07: Selected Parts
+# October 7: Selected Parts
 
 ### About the project
 For this board I chose to make a flight controller as it is something I'm sort of familiar with and have designed a couple in the past.  I chose to base it of the RP2350. I've been working with a RP2040 board I made recently and I kinda like it so I chose to go with the new chip in the series. There are some similarities so I copied over the usb c, power regulator, memory, and oscillator circuits of my previous design because if it ain't broke don't fix it.
@@ -24,9 +24,9 @@ I decided to add a micro sd card for data logging. At first I wasn't sure becaus
 ![First schematic draft](images/schematic-1.png)
 
 
-**2h**
+**Total time spent: 2 hours**
 
-# 2026-10-07: Routed Sensors and Micro SD Card
+# October 7: Routed Sensors and Micro SD Card
 
 ### Sensors
 I looked through the datasheets of each of the sensors and routed them up accordingly. This was pretty routine but for the magnetic sensor the datasheet called for only one 1uF cap for both power pins but I decided to add one for each power pin.
@@ -38,9 +38,9 @@ I wasn't sure how to wire up the micro sd card at first since the rp2350 can onl
 
 ![Micro SD circuit](images/microsd_circuit-1.png)
 
-### 2026-10-08: Switched to Buck-Boost Regulator
+**Total time spent: 1 hour**
 
-**1h**
+### October 8: Switched to Buck-Boost Regulator
 
 # Switched to Buck-Boost Regulator
 
@@ -56,9 +56,9 @@ The example schematic already had the requirements I needed so I pretty much cop
 
 ![TPS631000 circuti](images/TPS63000_circuit-1.png)
 
-**1h**
+**Total time spent: 1 hour**
 
-# 2026-10-08: Made MCU Power Circuit
+# October 8: Made MCU Power Circuit
 
 I went to start routing up the RP2350 and started with the power circuit. After reading the datasheet I was a little confused but I started trying to recreate the example power circuit for the build in 1.1v regulator it needs.
 
