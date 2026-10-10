@@ -70,3 +70,26 @@ I also changed the regulator circuit to a pull down resistor so it defaults to l
 
 **Total time spent: 1 hour**
 
+# October 10: Routed MCU and added pin headers
+
+### Routing MCU 
+
+I spent a while looking at the pintout for the RP2350 so I can wire up the spi, i2c, uart, adc, and gpio correctly.
+
+![MCU pin functions](images/MCU_pin_funcs.png)
+
+After a few tries of reorganizing the layout I came up with this that has two SPIs, an I2c, two UARTs, four PWMs, one ADC, and a few GPIOs.
+
+![MCU circuit](images/MCU_circuit-1.png)
+
+I also added an ADC to read the vbus voltage and a resistor divider so it can read volages above 3.3v.
+
+![USB circuit](images/USB_circuit-1.png)
+
+### Pin headers
+
+The flight controller needs pinouts so it can communicate with other boards. I added two UART headers in a special format so it can communicated with other boards I have made. I also added two I2C headers because the MCU only has two UARTs and with I2C it can communicate with many more boards. I added a serial wire debug header so it can be easily debugged and programmed. I also added one more header so it can communicate with an ESC. I then added two status LEDs, one that shows if the board is powered and another connected to a GPIO for software status.
+
+![Pin headers](images/header_circuit-1.png)
+
+**Total time spent: 2 hours**
