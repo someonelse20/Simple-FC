@@ -12012,10 +12012,10 @@
 		(descr "https://www.ti.com/lit/ds/symlink/tps62933.pdf")
 		(tags "SOT-583-8")
 		(property "Reference" "U5"
-			(at 2.96 -0.7 0)
+			(at 3.31 -0.35 0)
 			(unlocked yes)
 			(layer "F.SilkS")
-			(uuid "ec544de9-21f4-4810-bbd0-f961dd3ab001")
+			(uuid "f77c669d-75be-4273-9b55-eb1573a95d1f")
 			(effects
 				(font
 					(size 1 1)
@@ -12027,7 +12027,7 @@
 			(at 0 2.8 180)
 			(unlocked yes)
 			(layer "F.Fab")
-			(uuid "e262c196-36be-48d0-ba5b-0239cd056cce")
+			(uuid "722dff54-e4ae-47ad-8e67-7be8d8a57eba")
 			(effects
 				(font
 					(size 1 1)
@@ -12040,7 +12040,7 @@
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "b991e885-7a62-4170-ad90-95b02a27a4cc")
+			(uuid "11f3528f-34f2-42bf-99be-3f157d1c8e47")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12053,7 +12053,7 @@
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "6231fa86-dfde-4913-841a-766c289386e5")
+			(uuid "39595d0a-9f81-416a-bd2c-1912052b8baa")
 			(effects
 				(font
 					(size 1.27 1.27)

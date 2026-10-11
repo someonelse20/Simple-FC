@@ -110,3 +110,20 @@ I then started adding the rest of the chips and to make things fit I also had to
 
 **Total time spent: 1.5 hours**
 
+# October 11: Routed power and MCU for PCB
+
+### Routing power
+Per the RP2350 datasheet I started with routing the mcu's regulator. The example layout had a power trace running between two capacitors which I couldn't do without changing the spacing tolerances in kicad. I found a way to route it but ran into problems when I then tried routing the usb and qspi traces since they are all on that same side of the mcu. I kept tweaking things until they fit although I'm a little uncomfortable with how close everything is.
+
+![MCU power layout](images/mcu_power_pcb-1.png)
+
+I then went and routed the power regulator. Last journal I forgot to mention I added copper pads for an additial power input other than usb. I was unable to find a place to put it closer to the regulator but I think I can get away with a longer trace for it. The regulator layout was fairly simple and wasn't to complicated.
+
+![Power layout](images/power_pcb-1.png)
+
+Finally I placed all the decoupling capacitors and the oscillator. The only part that gave me trouble was the oscillator. I couldn't fit it as close as I would have liked because of the micro sd card slot. After looking at the pico 2 for reference I decided it will be ok to place it a little further.
+
+![MCU capacitors / oscillator](images/mcu_caps_pcb-1.png)
+
+**Total time spent: 3 hours**
+
