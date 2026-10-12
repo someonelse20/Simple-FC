@@ -141,3 +141,13 @@ I also forgot to add the snubber circuit to the anaglog voltage reference so I d
 
 **Total time spent: 2 hours**
 
+# October 11: Finished routing PCB
+
+After routing each of the separate circuits I starting routing them all together. Once I started I noticed I forgot to wire up the interrupt pins on the schematic which I quickly fixed. At first I tried to make it a two layer board but I ran out of space. I changed it to four layers and even now it's a bit crowded around the MCU. The pico 2 gets away with easier routing because it uses 0201 isntead of 0402 capacitors which I can't do. I did make the vias smaller which helped a lot but it still took a few tries to get everything to fit. Also around the magnetometer I added a zone with no copper fill for less magnetic noise. I tried to keep most of the signal traces to one layer so I could have ground and power layers. Below is the final result with and without the copper fills.
+
+![PCB no fills](images/pcb-4.png)
+
+![PCB with fills](images/pcb-5.png)
+
+**Total time spent: 2.5 hours**
+
