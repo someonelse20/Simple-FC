@@ -39,9 +39,9 @@
         "other_text_thickness": 0.15,
         "other_text_upright": false,
         "pads": {
-          "drill": 0.6,
-          "height": 1.6,
-          "width": 1.0
+          "drill": 0.0,
+          "height": 0.45,
+          "width": 0.3
         },
         "silk_line_width": 0.1,
         "silk_text_italic": false,
@@ -162,7 +162,7 @@
           ""
         ],
         [
-          "silk_edge_clearance|142890000|125000000|1bd79749-e3c6-4287-9c6d-4d5c21dd0a7e|b17414fc-22cf-4c8b-9c35-d66f6fa59a2a",
+          "silk_edge_clearance|142915000|125000000|1bd79749-e3c6-4287-9c6d-4d5c21dd0a7e|3494f917-50f0-44f4-a4dc-b2e9e2c79d1e",
           ""
         ],
         [
@@ -170,7 +170,7 @@
           ""
         ],
         [
-          "silk_edge_clearance|156710000|125000000|1bd79749-e3c6-4287-9c6d-4d5c21dd0a7e|2684d5e3-5226-40d4-80b8-6069f7aa50a6",
+          "silk_edge_clearance|156735000|125000000|1bd79749-e3c6-4287-9c6d-4d5c21dd0a7e|2a9a922b-329b-4bd1-a23d-e01f11938529",
           ""
         ],
         [
@@ -277,7 +277,7 @@
         "min_microvia_drill": 0.1,
         "min_resolved_spokes": 2,
         "min_silk_clearance": 0.0,
-        "min_text_height": 0.8,
+        "min_text_height": 0.75,
         "min_text_thickness": 0.08,
         "min_through_hole_diameter": 0.25,
         "min_track_width": 0.2,
