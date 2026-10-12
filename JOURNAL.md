@@ -141,7 +141,7 @@ I also forgot to add the snubber circuit to the anaglog voltage reference so I d
 
 **Total time spent: 2 hours**
 
-# October 11: Finished routing PCB
+# October 12: Finished routing PCB
 
 After routing each of the separate circuits I starting routing them all together. Once I started I noticed I forgot to wire up the interrupt pins on the schematic which I quickly fixed. At first I tried to make it a two layer board but I ran out of space. I changed it to four layers and even now it's a bit crowded around the MCU. The pico 2 gets away with easier routing because it uses 0201 isntead of 0402 capacitors which I can't do. I did make the vias smaller which helped a lot but it still took a few tries to get everything to fit. Also around the magnetometer I added a zone with no copper fill for less magnetic noise. I tried to keep most of the signal traces to one layer so I could have ground and power layers. Below is the final result with and without the copper fills.
 
@@ -150,4 +150,25 @@ After routing each of the separate circuits I starting routing them all together
 ![PCB with fills](images/pcb-5.png)
 
 **Total time spent: 2.5 hours**
+
+# October 12: Added 3D models and silkscreen
+
+### 3D models
+To pretty up the board I went around and found the 3d files for all the components that didn't have one. While doing this I noticed that the micro sd slot was backwards. So I fixed that and reajusted the pull up resistors. 
+
+![Micro SD PCB](images/microsd_pcb-1.png)
+
+I then added nice silkscreen labels to all the pin headers. 
+
+![3D back](images/3d-1.png)
+
+I then wanted to make a label to show which direction the sensor axes are. While double checking the datasheets I noticed that the magnetometer axes aren't aligned with the IMU's so I rotated the magnetometer until they did. While the x and y axes align the magnetometer has the z axis going down while the IMU's z axis goes up. Still it's much better and makes software easier.
+
+![Rotated magnetometer PCB](images/magnetometer_pcb-2.png)
+
+Here's the full 3D render:
+
+![Full 3D](images/3d-2.png)
+
+**Total time spent: 2 hours**
 
