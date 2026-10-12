@@ -127,3 +127,17 @@ Finally I placed all the decoupling capacitors and the oscillator. The only part
 
 **Total time spent: 3 hours**
 
+# October 11: Routed other ICs
+
+I went to route together all the other circuits. First I noticed that I forgot to add the decoupling capacitors to the regulator so I did that and tried to compact it a little more.
+
+![New power PCB](images/power_pcb-2.png)
+
+I also forgot to add the snubber circuit to the anaglog voltage reference so I did that too. Then I added the decoupling capacitors to each of the sensors and added the pull up resistors to the micro sd card.
+
+![Sensors PCB](images/sensors_pcb-1.png)
+
+![Magnetometer PCB](images/magnetometer_pcb-1.png)
+
+**Total time spent: 2 hours**
+
