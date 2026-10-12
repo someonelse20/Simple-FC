@@ -17678,6 +17678,22 @@
 		(uuid "ca366d37-7dc6-46d8-8852-ebc506dd9406")
 	)
 	(segment
+		(start 135.75 123.45)
+		(end 135.75 121.15)
+		(width 0.6)
+		(layer "F.Cu")
+		(net "Net-(D2-A)")
+		(uuid "25ae3e45-6097-4d5f-8371-4230efb850f0")
+	)
+	(segment
+		(start 135.75 121.15)
+		(end 134.9 120.3)
+		(width 0.6)
+		(layer "F.Cu")
+		(net "Net-(D2-A)")
+		(uuid "a2bf812c-1736-4932-85b9-fa7465232fd0")
+	)
+	(segment
 		(start 150.82 99.5)
 		(end 149.65 99.5)
 		(width 0.3)
