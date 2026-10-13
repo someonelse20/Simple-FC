@@ -1,0 +1,1 @@
+[('J2', '/usr/share/kicad/3dmodels/Connector_Card.3dshapes/microSD_HC_Molex_47219-2001.step'), ('U1', '/usr/share/kicad/3dmodels/Package_DFN_QFN.3dshapes/QFN-60-1EP_7x7mm_P0.4mm_EP3.4x3.4mm.step')]
