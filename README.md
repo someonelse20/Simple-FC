@@ -1,5 +1,5 @@
 # Simple-FC
-A RP2350 based flight controller with a 10-axis IMU
+A RP2350 based flight controller with a 10-axis IMU. This board is designed to be used for drones and had four PWM outputs to control ESCs as well as UART and I2C to communicate with other boards.
 
 ## Overview
 - **MCU**: RP2350
@@ -13,3 +13,7 @@ A RP2350 based flight controller with a 10-axis IMU
     - 4 PWM
     - 2 UART
     - 2 I2C
+    - USB C
+
+## BOM
+The BOM is located in BOM.csv and DigiKeyBOM.csv for ordering the parts from DikiKey. Alternativly the DigiKey BOM can be found [here](https://www.digikey.com/en/mylists/list/84RC15SOU8).
