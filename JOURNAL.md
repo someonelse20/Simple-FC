@@ -172,3 +172,13 @@ Here's the full 3D render:
 
 **Total time spent: 2 hours**
 
+# October 13: Got project ready to ship
+
+To get this ready to ship I started making the BOM. For this I went to the symbol fields spreadsheet in kicad and digikey and copied the part name into the spreadsheet. This was pretty tedious but I got it all done. I then wrote up a readme with what this project is and how it works and grabbed some screenshots for images.
+
+![readme file](images/readme.png)
+
+Now it's ready to ship!
+
+**Total time spent: 2 hours**
+
