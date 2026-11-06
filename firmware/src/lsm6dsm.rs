@@ -1,46 +1,43 @@
-//! # SPI Example
+//! # SPI DMA Example
 //!
-//! This application demonstrates how to use the SPI Driver to talk to a remote
-//! SPI device.
+//! This application demonstrates how to use DMA for SPI transfers.
 //!
+//! The application expects the MISO and MOSI pins to be wired together so that it is able to check
+//! whether the data was sent and received correctly.
 //!
-//! It may need to be adapted to your particular board layout and/or pin
-//! assignment.
-//!
-//! See the `Cargo.toml` file for Copyright and license details.
+//! See the `Cargo.toml` file for Copyright and licence details.
+#![no_std]
+#![no_main]
 
-use embedded_hal::spi::SpiDevice;
-use embedded_hal_bus::spi::ExclusiveDevice;
+use rp235x_hal as hal;
+
+use hal::singleton;
+
+use embedded_hal::delay::DelayNs;
+use embedded_hal::digital::OutputPin;
+use hal::clocks::Clock;
+use hal::dma::{bidirectional, DMAExt};
+use hal::fugit::RateExtU32;
+
 // Ensure we halt the program on panic (if we don't mention this crate it won't
 // be linked)
 use panic_halt as _;
 
-// Alias for our HAL crate
-use rp235x_hal as hal;
-
-// Some things we need
-use hal::clocks::Clock;
-use hal::fugit::RateExtU32;
+/// Tell the Boot ROM about our application
+#[link_section = ".start_block"]
+#[used]
+pub static IMAGE_DEF: hal::block::ImageDef = hal::block::ImageDef::secure_exe();
 
 /// External high-speed crystal on the Raspberry Pi Pico 2 board is 12 MHz.
 /// Adjust if your board has a different frequency
 const XTAL_FREQ_HZ: u32 = 12_000_000u32;
 
-/// Entry point to our bare-metal application.
-///
-/// The `#[hal::entry]` macro ensures the Cortex-M start-up code calls this function
-/// as soon as all global variables and the spinlock are initialised.
-///
-/// The function configures the rp235x peripherals, then performs some example
-/// SPI transactions, then goes to sleep.
+#[hal::entry]
 fn main() -> ! {
-    // Grab our singleton objects
     let mut pac = hal::pac::Peripherals::take().unwrap();
 
-    // Set up the watchdog driver - needed by the clock setup code
-    let mut watchdog = hal::Watchdog::new(pac.WATCHDOG);
-
-    // Configure the clocks
+    // Setup clocks and the watchdog.
+    let mut watchdog = hal::watchdog::Watchdog::new(pac.WATCHDOG);
     let clocks = hal::clocks::init_clocks_and_plls(
         XTAL_FREQ_HZ,
         pac.XOSC,
@@ -52,12 +49,8 @@ fn main() -> ! {
     )
     .unwrap();
 
-    let mut timer = hal::Timer::new_timer0(pac.TIMER0, &mut pac.RESETS, &clocks);
-
-    // The single-cycle I/O block controls our GPIO pins
-    let sio = hal::Sio::new(pac.SIO);
-
-    // Set the pins to their default state
+    // Setup the pins.
+    let sio = hal::sio::Sio::new(pac.SIO);
     let pins = hal::gpio::Pins::new(
         pac.IO_BANK0,
         pac.PADS_BANK0,
@@ -65,41 +58,66 @@ fn main() -> ! {
         &mut pac.RESETS,
     );
 
-    // These are implicitly used by the spi driver if they are in the correct mode
+    // Set up our SPI pins into the correct mode
     let spi_mosi = pins.gpio7.into_function::<hal::gpio::FunctionSpi>();
     let spi_miso = pins.gpio4.into_function::<hal::gpio::FunctionSpi>();
     let spi_sclk = pins.gpio6.into_function::<hal::gpio::FunctionSpi>();
-    let spi_bus = hal::spi::Spi::<_, _, _, 8>::new(pac.SPI0, (spi_mosi, spi_miso, spi_sclk));
+    let spi = hal::spi::Spi::<_, _, _, 8>::new(pac.SPI0, (spi_mosi, spi_miso, spi_sclk));
 
     // Exchange the uninitialised SPI driver for an initialised one
-    let spi_bus = spi_bus.init(
+    let spi = spi.init(
         &mut pac.RESETS,
         clocks.peripheral_clock.freq(),
-        16.MHz(),
+        16_000_000u32.Hz(),
         embedded_hal::spi::MODE_0,
     );
 
-    let spi_cs = pins.gpio8.into_function::<hal::gpio::FunctionSioOutput>();
-    let mut spi = ExclusiveDevice::new(spi_bus, spi_cs, &mut timer).unwrap();
+    // Initialize DMA.
+    let dma = pac.DMA.split(&mut pac.RESETS);
+    // Configure GPIO25 as an output
+    let mut led_pin = pins.gpio25.into_push_pull_output();
+    let mut delay = hal::Timer::new_timer0(pac.TIMER0, &mut pac.RESETS, &clocks);
 
-    // Write out 0, ignore return value
-    if spi.write(&[0]).is_ok() {
-        // SPI write was successful
-    };
+    // Use DMA to transfer some bytes (single buffering).
+    let tx_buf = singleton!(: [u8; 16] = [0x42; 16]).unwrap();
+    let rx_buf = singleton!(: [u8; 16] = [0; 16]).unwrap();
 
-    // Do a read+write at the same time. Data in `buffer` will be replaced with
-    // the data read from the SPI device.
-    let mut buffer: [u8; 4] = [1, 2, 3, 4];
-    let transfer_success = spi.transfer_in_place(&mut buffer);
-    #[allow(clippy::single_match)]
-    match transfer_success {
-        Ok(_) => {}  // Handle success
-        Err(_) => {} // handle errors
-    };
+    // Use BidirectionalConfig to simultaneously write to spi from tx_buf and read into rx_buf
+    let transfer = bidirectional::Config::new((dma.ch0, dma.ch1), tx_buf, spi, rx_buf).start();
+    // Wait for both DMA channels to finish
+    let ((_ch0, _ch1), tx_buf, _spi, rx_buf) = transfer.wait();
 
+    // Compare buffers to see if the data was transferred correctly
+    for i in 0..rx_buf.len() {
+        if rx_buf[i] != tx_buf[i] {
+            // Fast blink on error
+            loop {
+                led_pin.set_high().unwrap();
+                delay.delay_ms(100);
+                led_pin.set_low().unwrap();
+                delay.delay_ms(100);
+            }
+        }
+    }
+
+    // Slow blink on success
     loop {
-        hal::arch::wfi();
+        led_pin.set_high().unwrap();
+        delay.delay_ms(500);
+        led_pin.set_low().unwrap();
+        delay.delay_ms(500);
     }
 }
+
+/// Program metadata for `picotool info`
+#[link_section = ".bi_entries"]
+#[used]
+pub static PICOTOOL_ENTRIES: [hal::binary_info::EntryAddr; 5] = [
+    hal::binary_info::rp_cargo_bin_name!(),
+    hal::binary_info::rp_cargo_version!(),
+    hal::binary_info::rp_program_description!(c"SPI DMA Example"),
+    hal::binary_info::rp_cargo_homepage_url!(),
+    hal::binary_info::rp_program_build_attribute!(),
+];
 
 // End of file

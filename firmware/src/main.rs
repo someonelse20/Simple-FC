@@ -1,41 +1,45 @@
-//! Blinks the LED on a Pico board
+//! # SPI DMA Example
 //!
-//! This will blink an LED attached to GP25, which is the pin the Pico uses for the on-board LED.
+//! This application demonstrates how to use DMA for SPI transfers.
+//!
+//! The application expects the MISO and MOSI pins to be wired together so that it is able to check
+//! whether the data was sent and received correctly.
+//!
+//! See the `Cargo.toml` file for Copyright and licence details.
 #![no_std]
 #![no_main]
 
-use defmt::*;
-use defmt_rtt as _;
-use embedded_hal::digital::OutputPin;
-use panic_probe as _;
-use rp235x_hal::clocks::init_clocks_and_plls;
-use rp235x_hal::{self as hal, entry};
-use rp235x_hal::{Clock, pac};
+use rp235x_hal as hal;
 
-// Provide an alias for our BSP so we can switch targets quickly.
-// Uncomment the BSP you included in Cargo.toml, the rest of the code does not need to change.
-// use some_bsp;
+use hal::singleton;
+
+use embedded_hal::delay::DelayNs;
+use embedded_hal::digital::OutputPin;
+use hal::clocks::Clock;
+use hal::dma::{bidirectional, DMAExt};
+use hal::fugit::RateExtU32;
+
+// Ensure we halt the program on panic (if we don't mention this crate it won't
+// be linked)
+use panic_halt as _;
 
 /// Tell the Boot ROM about our application
-#[unsafe(link_section = ".start_block")]
+#[link_section = ".start_block"]
 #[used]
 pub static IMAGE_DEF: hal::block::ImageDef = hal::block::ImageDef::secure_exe();
 
-// Import modules
-mod lsm6dsm;
+/// External high-speed crystal on the Raspberry Pi Pico 2 board is 12 MHz.
+/// Adjust if your board has a different frequency
+const XTAL_FREQ_HZ: u32 = 12_000_000u32;
 
-#[entry]
+#[hal::entry]
 fn main() -> ! {
-    info!("Program start");
-    let mut pac = pac::Peripherals::take().unwrap();
-    let core = cortex_m::Peripherals::take().unwrap();
-    let mut watchdog = hal::Watchdog::new(pac.WATCHDOG);
-    let sio = hal::Sio::new(pac.SIO);
+    let mut pac = hal::pac::Peripherals::take().unwrap();
 
-    // External high-speed crystal on the pico board is 12Mhz
-    let external_xtal_freq_hz = 12_000_000u32;
-    let clocks = init_clocks_and_plls(
-        external_xtal_freq_hz,
+    // Setup clocks and the watchdog.
+    let mut watchdog = hal::watchdog::Watchdog::new(pac.WATCHDOG);
+    let clocks = hal::clocks::init_clocks_and_plls(
+        XTAL_FREQ_HZ,
         pac.XOSC,
         pac.CLOCKS,
         pac.PLL_SYS,
@@ -43,11 +47,10 @@ fn main() -> ! {
         &mut pac.RESETS,
         &mut watchdog,
     )
-    .ok()
     .unwrap();
 
-    let mut delay = cortex_m::delay::Delay::new(core.SYST, clocks.system_clock.freq().to_Hz());
-
+    // Setup the pins.
+    let sio = hal::sio::Sio::new(pac.SIO);
     let pins = hal::gpio::Pins::new(
         pac.IO_BANK0,
         pac.PADS_BANK0,
@@ -55,36 +58,66 @@ fn main() -> ! {
         &mut pac.RESETS,
     );
 
-    // This is the correct pin on the Raspberry Pico 2 board. On other boards, even if they have an
-    // on-board LED, it might need to be changed.
-    //
-    // Notably, on the Pico 2 W, the LED is not connected to any of the RP2350 GPIOs but to the cyw43 module instead.
-    // One way to do that is by using [embassy](https://github.com/embassy-rs/embassy/blob/main/examples/rp/src/bin/wifi_blinky.rs)
-    //
-    // If you have a Pico W and want to toggle a LED with a simple GPIO output pin, you can connect an external
-    // LED to one of the GPIO pins, and reference that pin here. Don't forget adding an appropriate resistor
-    // in series with the LED.
-    let mut led_pin = pins.gpio25.into_push_pull_output();
+    // Set up our SPI pins into the correct mode
+    let spi_mosi = pins.gpio7.into_function::<hal::gpio::FunctionSpi>();
+    let spi_miso = pins.gpio4.into_function::<hal::gpio::FunctionSpi>();
+    let spi_sclk = pins.gpio6.into_function::<hal::gpio::FunctionSpi>();
+    let spi = hal::spi::Spi::<_, _, _, 8>::new(pac.SPI0, (spi_mosi, spi_miso, spi_sclk));
 
+    // Exchange the uninitialised SPI driver for an initialised one
+    let spi = spi.init(
+        &mut pac.RESETS,
+        clocks.peripheral_clock.freq(),
+        16_000_000u32.Hz(),
+        embedded_hal::spi::MODE_0,
+    );
+
+    // Initialize DMA.
+    let dma = pac.DMA.split(&mut pac.RESETS);
+    // Configure GPIO25 as an output
+    let mut led_pin = pins.gpio25.into_push_pull_output();
+    let mut delay = hal::Timer::new_timer0(pac.TIMER0, &mut pac.RESETS, &clocks);
+
+    // Use DMA to transfer some bytes (single buffering).
+    let tx_buf = singleton!(: [u8; 16] = [0x42; 16]).unwrap();
+    let rx_buf = singleton!(: [u8; 16] = [0; 16]).unwrap();
+
+    // Use BidirectionalConfig to simultaneously write to spi from tx_buf and read into rx_buf
+    let transfer = bidirectional::Config::new((dma.ch0, dma.ch1), tx_buf, spi, rx_buf).start();
+    // Wait for both DMA channels to finish
+    let ((_ch0, _ch1), tx_buf, _spi, rx_buf) = transfer.wait();
+
+    // Compare buffers to see if the data was transferred correctly
+    for i in 0..rx_buf.len() {
+        if rx_buf[i] != tx_buf[i] {
+            // Fast blink on error
+            loop {
+                led_pin.set_high().unwrap();
+                delay.delay_ms(100);
+                led_pin.set_low().unwrap();
+                delay.delay_ms(100);
+            }
+        }
+    }
+
+    // Slow blink on success
     loop {
-        info!("on!");
         led_pin.set_high().unwrap();
         delay.delay_ms(500);
-        info!("off!");
         led_pin.set_low().unwrap();
         delay.delay_ms(500);
     }
 }
 
 /// Program metadata for `picotool info`
-#[unsafe(link_section = ".bi_entries")]
+#[link_section = ".bi_entries"]
 #[used]
-pub static PICOTOOL_ENTRIES: [rp235x_hal::binary_info::EntryAddr; 5] = [
-    rp235x_hal::binary_info::rp_cargo_bin_name!(),
-    rp235x_hal::binary_info::rp_cargo_version!(),
-    rp235x_hal::binary_info::rp_program_description!(c"RP2350 Template"),
-    rp235x_hal::binary_info::rp_cargo_homepage_url!(),
-    rp235x_hal::binary_info::rp_program_build_attribute!(),
+pub static PICOTOOL_ENTRIES: [hal::binary_info::EntryAddr; 5] = [
+    hal::binary_info::rp_cargo_bin_name!(),
+    hal::binary_info::rp_cargo_version!(),
+    hal::binary_info::rp_program_description!(c"SPI DMA Example"),
+    hal::binary_info::rp_cargo_homepage_url!(),
+    hal::binary_info::rp_program_build_attribute!(),
 ];
 
 // End of file
