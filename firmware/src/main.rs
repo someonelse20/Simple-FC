@@ -21,6 +21,9 @@ use rp235x_hal::{Clock, pac};
 #[used]
 pub static IMAGE_DEF: hal::block::ImageDef = hal::block::ImageDef::secure_exe();
 
+// Import modules
+mod lsm6dsm;
+
 #[entry]
 fn main() -> ! {
     info!("Program start");

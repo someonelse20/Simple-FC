@@ -8,6 +8,8 @@ license = "MIT OR Apache-2.0"
 cortex-m = "0.7"
 cortex-m-rt = "0.7"
 embedded-hal = { version = "1.0.0" }
+embedded-hal-bus = {version = "0.3.0", features = ["defmt-03"]}
+panic-halt = "0.2.0"
 
 defmt = "1"
 defmt-rtt = "1"
