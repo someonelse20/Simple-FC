@@ -23,6 +23,8 @@ use hal::fugit::RateExtU32;
 // be linked)
 use panic_halt as _;
 
+mod lsm6dsm;
+
 /// Tell the Boot ROM about our application
 #[link_section = ".start_block"]
 #[used]
