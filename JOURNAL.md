@@ -182,3 +182,11 @@ Now it's ready to ship!
 
 **Total time spent: 2 hours**
 
+# November 9: Wrote firmware
+
+I got feedback for this project to reorganize the files and write firmware. I moved the kicad files into their own folder. I decided to try my hand at writing the firmware in rust. I found a rust library for the RP2350 and copied their template. I don't really know rust and I tried using this as an excuse to learn it. But I ran into so many problems I gave up on writing it in rust and started in c. This didn't take me nearly as long and I wrote up some code which will check the device id of the IMU and blink the led if it isn't right and will keep the led on if it is correct. Here's a picture of the new file structure because pictures of code is boring.
+
+![File structure](images/folder_tree.png)
+
+**Total time spent: 3 hours**
+
