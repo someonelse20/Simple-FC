@@ -5,18 +5,22 @@
 #include <hardware/spi.h>
 #include <stdint.h>
 
+#define LSM_ODR_0001_6  0x0B
+#define LSM_ODR_0012_5  0x01
+#define LSM_ODR_0026    0x02
+#define LSM_ODR_0052    0x03
+#define LSM_ODR_0104    0x04
+#define LSM_ODR_0208    0x05
+#define LSM_ODR_0416    0x06
+#define LSM_ODR_0833    0x07
+#define LSM_ODR_1660    0x08
+#define LSM_ODR_3330    0x09
+#define LSM_ODR_6660    0x0A
 
-#define LSM_ODR_0001_6 0x0B
-#define LSM_ODR_0012_5 0x01
-#define LSM_ODR_0026   0x02
-#define LSM_ODR_0052   0x03
-#define LSM_ODR_0104   0x04
-#define LSM_ODR_0208   0x05
-#define LSM_ODR_0416   0x06
-#define LSM_ODR_0833   0x07
-#define LSM_ODR_1660   0x08
-#define LSM_ODR_3330   0x09
-#define LSM_ODR_6660   0x0A
+#define LSM_XL_SCALE_2  0x00
+#define LSM_XL_SCALE_4  0x10
+#define LSM_XL_SCALE_8  0x11
+#define LSM_XL_SCALE_16 0x01
 
 struct LSM6DSM_h {
 	uint8_t CTRL1_XL_reg;
@@ -28,5 +32,9 @@ void LSM6DSM_init(struct LSM6DSM_h *lsm6dsm);
 bool LSM6DSM_check_id();
 void LSM6DSM_reset(struct LSM6DSM_h *lsm6dsm);
 void LSM6DSM_clear_mem(struct LSM6DSM_h *lsm6dsm);
+void LSM6DSM_set_XL_ODR(uint8_t ODR);
+void LSM6DSM_set_XL_scale(uint8_t scale);
+void LSM6DSM_set_G_ODR(uint8_t ODR);
+void LSM6DSM_set_G_scale(uint8_t scale);
 
 #endif
