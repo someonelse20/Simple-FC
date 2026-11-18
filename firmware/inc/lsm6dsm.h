@@ -5,33 +5,47 @@
 #include <hardware/spi.h>
 #include <stdint.h>
 
-#define LSM_ODR_0001_6  0x0B
-#define LSM_ODR_0012_5  0x01
-#define LSM_ODR_0026    0x02
-#define LSM_ODR_0052    0x03
-#define LSM_ODR_0104    0x04
-#define LSM_ODR_0208    0x05
-#define LSM_ODR_0416    0x06
-#define LSM_ODR_0833    0x07
-#define LSM_ODR_1660    0x08
-#define LSM_ODR_3330    0x09
-#define LSM_ODR_6660    0x0A
+// FIFO Decimation
+#define LSM_FIFO_DEC_0   0x01
+#define LSM_FIFO_DEC_2   0x02
+#define LSM_FIFO_DEC_3   0x03
+#define LSM_FIFO_DEC_4   0x04
+#define LSM_FIFO_DEC_8   0x05
+#define LSM_FIFO_DEC_16  0x06
+#define LSM_FIFO_DEC_32  0x07
 
-#define LSM_XL_SCALE_2  0x00
-#define LSM_XL_SCALE_4  0x10
-#define LSM_XL_SCALE_8  0x11
-#define LSM_XL_SCALE_16 0x01
+#define LSM_FIFO_MODE_BYPASS         0x01
+#define LSM_FIFO_MODE_FIFO           0x02
+#define LSM_FIFO_MODE_CONT           0x04
+#define LSM_FIFO_MODE_CONT_FIFO      0x05
+#define LSM_FIFO_MODE_BYPASS_CONT    0x07
 
-struct LSM6DSM_h {
-	uint8_t CTRL1_XL_reg;
-	uint8_t CTRL2_G_reg;
-	uint8_t CTRL3_C_reg;
-};
+#define LSM_ODR_0001_6   0x0B
+#define LSM_ODR_0012_5   0x01
+#define LSM_ODR_0026     0x02
+#define LSM_ODR_0052     0x03
+#define LSM_ODR_0104     0x04
+#define LSM_ODR_0208     0x05
+#define LSM_ODR_0416     0x06
+#define LSM_ODR_0833     0x07
+#define LSM_ODR_1660     0x08
+#define LSM_ODR_3330     0x09
+#define LSM_ODR_6660     0x0A
 
-void LSM6DSM_init(struct LSM6DSM_h *lsm6dsm);
+#define LSM_XL_SCALE_2   0x00
+#define LSM_XL_SCALE_4   0x02
+#define LSM_XL_SCALE_8   0x03
+#define LSM_XL_SCALE_16  0x01
+
+#define LSM_G_SCALE_250  0x00
+#define LSM_G_SCALE_500  0x01
+#define LSM_G_SCALE_1000 0x02
+#define LSM_G_SCALE_2000 0x03
+
+void LSM6DSM_init();
 bool LSM6DSM_check_id();
-void LSM6DSM_reset(struct LSM6DSM_h *lsm6dsm);
-void LSM6DSM_clear_mem(struct LSM6DSM_h *lsm6dsm);
+void LSM6DSM_reset();
+void LSM6DSM_clear_mem();
 void LSM6DSM_set_XL_ODR(uint8_t ODR);
 void LSM6DSM_set_XL_scale(uint8_t scale);
 void LSM6DSM_set_G_ODR(uint8_t ODR);
