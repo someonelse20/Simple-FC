@@ -44,11 +44,18 @@
 
 void LSM6DSM_init();
 bool LSM6DSM_check_id();
+
 void LSM6DSM_reset();
 void LSM6DSM_clear_mem();
+
 void LSM6DSM_set_XL_ODR(uint8_t ODR);
 void LSM6DSM_set_XL_scale(uint8_t scale);
 void LSM6DSM_set_G_ODR(uint8_t ODR);
 void LSM6DSM_set_G_scale(uint8_t scale);
+
+void LSM6DSM_int_handler();
+
+float *LSM6DSM_get_gyro();
+float *LSM6DSM_get_accel();
 
 #endif

@@ -10,7 +10,10 @@
 typedef struct {
 	uint16_t gyro[3];
 	uint16_t accel[3];
-}data_raw_t;
+} data_raw_t;
+
+static float gyro[3];
+static float accel[3];
 
 static void write_reg(uint8_t reg, uint8_t buf);
 static void write_mask(uint8_t reg, uint8_t value, uint8_t mask);
