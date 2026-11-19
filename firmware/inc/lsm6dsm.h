@@ -77,6 +77,8 @@ void LSM6DSM_set_G_scale(uint8_t scale);
 
 void LSM6DSM_int_handler(uint gpio, uint32_t events);
 
+void LSM6DSM_poll();
+
 float *LSM6DSM_get_gyro();
 float *LSM6DSM_get_accel();
 

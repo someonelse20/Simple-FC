@@ -85,12 +85,15 @@ void LSM6DSM_init() {
 }
 
 void LSM6DSM_int_handler(uint gpio, uint32_t events) {
-	if (gpio != LSM_PIN_INT1)
-		return;
-
 	if (events != GPIO_IRQ_EDGE_RISE)
 		return;
 
+	if (gpio == LSM_PIN_INT1) {
+		LSM6DSM_poll();
+	}
+}
+
+void LSM6DSM_poll() {
 	uint16_t gyro_raw[3];
 	uint16_t accel_raw[3];
 
