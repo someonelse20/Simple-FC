@@ -7,18 +7,13 @@
 #include "lsm6dsm.h"
 #include "lsm6dsm_regs.h"
 
-typedef struct {
-	uint16_t gyro[3];
-	uint16_t accel[3];
-} data_raw_t;
-
 static float gyro[3];
 static float accel[3];
 
 static void write_reg(uint8_t reg, uint8_t buf);
 static void write_mask(uint8_t reg, uint8_t value, uint8_t mask);
 static void read_regs(uint8_t reg, uint8_t *buf, uint16_t len);
-static data_raw_t read_fifo();
+static void read_fifo(uint16_t *gyro, uint16_t *accel);
 static void set_conf();
 
 bool LSM6DSM_check_id() {
@@ -76,6 +71,27 @@ void LSM6DSM_init() {
 
 	LSM6DSM_reset();
 
+	set_conf();
+}
+
+void LSM6DSM_int_handler() {
+	uint16_t gyro_raw[3];
+	uint16_t accel_raw[3];
+
+	read_fifo(gyro_raw, accel_raw);
+
+	for (int i = 0; i < 3; i++) {
+		gyro[i]  = gyro_raw[i]  * LSM_G_SO_1000;
+		accel[i] = accel_raw[i] * LSM_XL_SO_8;
+	}
+}
+
+float *LSM6DSM_get_gyro() {
+	return gyro;
+}
+
+float *LSM6DSM_get_accel() {
+	return accel;
 }
 
 static void write_reg(uint8_t reg, uint8_t buf) {
@@ -109,30 +125,27 @@ static void read_regs(uint8_t reg, uint8_t *buf, uint16_t len) {
 	gpio_put(PIN_CS, 0);
 }
 
-static data_raw_t read_fifo() {
-	data_raw_t data_raw;
+static void read_fifo(uint16_t *gyro, uint16_t *accel) {
 	uint8_t buf[2];
 
 	for (int i = 0; i < 3; i++) {
 		read_regs(FIFO_DATA_OUT_L, buf, 2);
 
-		data_raw.gyro[i] = (buf[1] >> 8) | buf[0];
+		gyro[i] = (buf[1] >> 8) | buf[0];
 	}
 
 	for (int i = 2; i < 6; i++) {
 		read_regs(FIFO_DATA_OUT_L, buf, 2);
 
-		data_raw.accel[i] = (buf[1] >> 8) | buf[0];
+		accel[i] = (buf[1] >> 8) | buf[0];
 	}
-
-	return data_raw;
 }
 
 static void set_conf() {
-	LSM6DSM_set_G_scale(LSM_G_SCALE_1000);
+	LSM6DSM_set_G_scale(LSM_G_FS_1000);
 	LSM6DSM_set_G_ODR(LSM_ODR_6660);
 
-	LSM6DSM_set_XL_scale(LSM_XL_SCALE_8);
+	LSM6DSM_set_XL_scale(LSM_XL_FS_8);
 	LSM6DSM_set_XL_ODR(LSM_ODR_6660);
 
 	// Set FIFO threshold
@@ -161,3 +174,4 @@ static void set_conf() {
 	// Disable I2C
 	write_reg(CTRL4_C, 0b00000100);
 }
+
