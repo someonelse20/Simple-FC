@@ -1,3 +1,4 @@
+#include <hardware/gpio.h>
 #include <hardware/spi.h>
 #include <pico/stdlib.h>
 #include <pico/time.h>
@@ -6,6 +7,9 @@
 
 #include "lsm6dsm.h"
 #include "lsm6dsm_regs.h"
+
+#define SPI_BUS spi0
+#define SPI_DELAY 10
 
 static float gyro[3];
 static float accel[3];
@@ -65,6 +69,12 @@ void LSM6DSM_set_G_scale(uint8_t scale) {
 }
 
 void LSM6DSM_init() {
+	gpio_init(LSM_PIN_CS);
+	gpio_init(LSM_PIN_INT1);
+	gpio_init(LSM_PIN_INT2);
+
+	gpio_set_irq_enabled_with_callback(LSM_PIN_INT1, GPIO_IRQ_EDGE_RISE, true, LSM6DSM_int_handler);
+
 	if (!LSM6DSM_check_id()) {
 		return;
 	}
@@ -74,7 +84,13 @@ void LSM6DSM_init() {
 	set_conf();
 }
 
-void LSM6DSM_int_handler() {
+void LSM6DSM_int_handler(uint gpio, uint32_t events) {
+	if (gpio != LSM_PIN_INT1)
+		return;
+
+	if (events != GPIO_IRQ_EDGE_RISE)
+		return;
+
 	uint16_t gyro_raw[3];
 	uint16_t accel_raw[3];
 
@@ -97,11 +113,11 @@ float *LSM6DSM_get_accel() {
 static void write_reg(uint8_t reg, uint8_t buf) {
 	reg |= WRITE_BIT;
 
-	gpio_put(PIN_CS, 0);
+	gpio_put(LSM_PIN_CS, 0);
 	spi_write_blocking(SPI_BUS, &reg, 1);
 	sleep_ms(SPI_DELAY);
 	spi_write_blocking(SPI_BUS, &buf, 1);
-	gpio_put(PIN_CS, 0);
+	gpio_put(LSM_PIN_CS, 0);
 }
 
 static void write_mask(uint8_t reg, uint8_t value, uint8_t mask) {
@@ -118,11 +134,11 @@ static void write_mask(uint8_t reg, uint8_t value, uint8_t mask) {
 static void read_regs(uint8_t reg, uint8_t *buf, uint16_t len) {
 	reg |= READ_BIT;
 
-	gpio_put(PIN_CS, 0);
+	gpio_put(LSM_PIN_CS, 0);
 	spi_write_blocking(SPI_BUS, &reg, 1);
 	sleep_ms(SPI_DELAY);
 	spi_read_blocking(SPI_BUS, 0, buf, len);
-	gpio_put(PIN_CS, 0);
+	gpio_put(LSM_PIN_CS, 0);
 }
 
 static void read_fifo(uint16_t *gyro, uint16_t *accel) {

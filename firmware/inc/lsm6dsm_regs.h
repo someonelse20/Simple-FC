@@ -1,12 +1,6 @@
 #ifndef LSM6DSM_REGS_H
 #define LSM6DSM_REGS_H
 
-#define PIN_INT1 18
-#define PIN_INT2 23
-#define PIN_CS 21
-#define SPI_BUS spi0
-#define SPI_DELAY 10
-
 #define READ_BIT              1
 #define WRITE_BIT             0
 
