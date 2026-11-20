@@ -1,6 +1,9 @@
 #ifndef LSM6DSM_REGS_H
 #define LSM6DSM_REGS_H
 
+#define READ_BIT              1
+#define WRITE_BIT             0
+
 #define FIFO_CTRL1            0x06
 #define FIFO_CTRL2            0x07
 #define FIFO_CTRL3            0x08
