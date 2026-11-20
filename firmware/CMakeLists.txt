@@ -12,10 +12,12 @@ pico_sdk_init()
 
 include_directories(${CMAKE_SOURCE_DIR}/inc)
 
-add_library(libfirmware STATIC src/spi.c src/lsm6dsm.c)
+add_library(libfirmware STATIC src/lsm6dsm.c)
 target_include_directories(libfirmware PUBLIC ${CMAKE_SOURCE_DIR}/inc)
 target_link_libraries(libfirmware pico_stdlib hardware_spi)
 
-add_executable(firmware src/main.c)
+add_executable(firmware
+	src/main.c
+)
 
 target_link_libraries(firmware libfirmware pico_stdlib hardware_spi)
