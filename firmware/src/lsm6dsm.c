@@ -7,7 +7,7 @@
 
 #include "lsm6dsm_regs.h"
 #include "lsm6dsm.h"
-#include "spi.h"
+#include "sensors.h"
 
 static float gyro[3];
 static float accel[3];
@@ -18,7 +18,7 @@ static void set_conf();
 bool LSM6DSM_check_id() {
 	uint8_t id = 0x00;
 
-	spi_read_regs(LSM_PIN_CS, WHO_AM_I, &id, 1);
+	read_regs(WHO_AM_I, &id, 1);
 
 	if (id == 0x6A) {
 		return 1;
@@ -34,7 +34,7 @@ void LSM6DSM_reset() {
 	// Wait for device to boot
 	sleep_ms(40); // Datasheet specifies 35ms to boot, using 40ms for good measure
 
-	spi_write_reg(LSM_PIN_CS, CTRL3_C, buf);
+	write_reg(CTRL3_C, buf);
 
 	LSM6DSM_clear_mem();
 }
@@ -43,24 +43,24 @@ void LSM6DSM_clear_mem() {
 	// uint8_t buf = 0x84;
 	uint8_t buf = 0b10000100; // Clears memory.
 
-	spi_write_reg(LSM_PIN_CS, CTRL3_C, buf);
+	write_reg(CTRL3_C, buf);
 }
 
 // Bits are numbered 7 6 5 4 3 2 1 0
 void LSM6DSM_set_XL_ODR(uint8_t ODR) {
-	spi_write_mask(LSM_PIN_CS, CTRL1_XL, ODR, 0b00001111); // Clear bits 4-7
+	write_mask(CTRL1_XL, ODR, 0b00001111); // Clear bits 4-7
 }
 
 void LSM6DSM_set_XL_scale(uint8_t scale) {
-	spi_write_mask(LSM_PIN_CS, CTRL1_XL, scale, 0b11110011); // Clear bits 2-3
+	write_mask(CTRL1_XL, scale, 0b11110011); // Clear bits 2-3
 }
 
 void LSM6DSM_set_G_ODR(uint8_t ODR) {
-	spi_write_mask(LSM_PIN_CS, CTRL2_G, ODR, 0b00001111); // Clear bits 4-7
+	write_mask(CTRL2_G, ODR, 0b00001111); // Clear bits 4-7
 }
 
 void LSM6DSM_set_G_scale(uint8_t scale) {
-	spi_write_mask(LSM_PIN_CS, CTRL2_G, scale, 0b11110011); // Clear bits 2-3
+	write_mask(CTRL2_G, scale, 0b11110011); // Clear bits 2-3
 }
 
 void LSM6DSM_init() {
@@ -112,13 +112,13 @@ static void read_fifo(uint16_t *gyro, uint16_t *accel) {
 	uint8_t buf[2];
 
 	for (int i = 0; i < 3; i++) {
-		spi_read_regs(LSM_PIN_CS, FIFO_DATA_OUT_L, buf, 2);
+		read_regs(FIFO_DATA_OUT_L, buf, 2);
 
 		gyro[i] = (buf[1] >> 8) | buf[0];
 	}
 
 	for (int i = 2; i < 6; i++) {
-		spi_read_regs(LSM_PIN_CS, FIFO_DATA_OUT_L, buf, 2);
+		read_regs(FIFO_DATA_OUT_L, buf, 2);
 
 		accel[i] = (buf[1] >> 8) | buf[0];
 	}
@@ -133,28 +133,28 @@ static void set_conf() {
 
 	// Set FIFO threshold
 	const uint8_t FIFO_threshold = 12; // 6 samples with 2 bytes per samples
-	spi_write_reg(LSM_PIN_CS, FIFO_CTRL1, FIFO_threshold);
+	write_reg(FIFO_CTRL1, FIFO_threshold);
 
 	// Set FIFO decimation to none
-	spi_write_mask(LSM_PIN_CS, FIFO_CTRL3, LSM_FIFO_DEC_0, 0b11000111);
-	spi_write_mask(LSM_PIN_CS, FIFO_CTRL3, LSM_FIFO_DEC_0, 0b11111000);
+	write_mask(FIFO_CTRL3, LSM_FIFO_DEC_0, 0b11000111);
+	write_mask(FIFO_CTRL3, LSM_FIFO_DEC_0, 0b11111000);
 
 	// Set FIFO to stop on threshold
-	spi_write_reg(LSM_PIN_CS, FIFO_CTRL4, 0b1000000);
+	write_reg(FIFO_CTRL4, 0b1000000);
 
 	// Set FIFO ODR
-	spi_write_mask(LSM_PIN_CS, FIFO_CTRL5, LSM_ODR_6660, 0b10000111);
+	write_mask(FIFO_CTRL5, LSM_ODR_6660, 0b10000111);
 
 	// Set FIFO mode to continuous
-	spi_write_mask(LSM_PIN_CS, FIFO_CTRL5, LSM_FIFO_MODE_CONT, 0b11111000);
+	write_mask(FIFO_CTRL5, LSM_FIFO_MODE_CONT, 0b11111000);
 
 	// Set INT1 to triger on FIFO threshold
-	spi_write_reg(LSM_PIN_CS, INT1_CTRL, 0b00001000);
+	write_reg(INT1_CTRL, 0b00001000);
 
 	// Set INT2 to trigger on temp data ready
-	spi_write_reg(LSM_PIN_CS, INT2_CTRL, 0b00000100);
+	write_reg(INT2_CTRL, 0b00000100);
 
 	// Disable I2C
-	spi_write_reg(LSM_PIN_CS, CTRL4_C, 0b00000100);
+	write_reg(CTRL4_C, 0b00000100);
 }
 
