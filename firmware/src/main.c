@@ -5,8 +5,8 @@
 #include <pico/time.h>
 #include <pico/types.h>
 
-#include "main.h"
 #include "lsm6dsm.h"
+#include "main.h"
 
 int main() {
 	stdio_init_all();
@@ -21,6 +21,8 @@ int main() {
 	gpio_set_dir(PIN_LED, GPIO_OUT);
 	gpio_put(PIN_LED, 0);
 	bi_decl(bi_1pin_with_name(PIN_LED, "LED"));
+
+	LSM6DSM_init();
 
 	sleep_ms(1000);
 
