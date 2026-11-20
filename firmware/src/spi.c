@@ -1,9 +1,10 @@
 #include <hardware/gpio.h>
+#include <stdint.h>
 
-#include "sensors.h"
 #include "lsm6dsm.h"
+#include "spi.h"
 
-void write_reg(uint8_t reg, uint8_t buf) {
+void spi_write_reg(uint16_t cs_pin, uint8_t reg, uint8_t buf) {
 	reg |= WRITE_BIT;
 
 	gpio_put(LSM_PIN_CS, 0);
@@ -13,18 +14,18 @@ void write_reg(uint8_t reg, uint8_t buf) {
 	gpio_put(LSM_PIN_CS, 0);
 }
 
-void write_mask(uint8_t reg, uint8_t value, uint8_t mask) {
+void spi_write_mask(uint16_t cs_pin, uint8_t reg, uint8_t value, uint8_t mask) {
 	uint8_t buf = 0x00;
 
-	read_regs(reg, &buf, 1);
+	spi_read_regs(cs_pin, reg, &buf, 1);
 
 	buf &= ~mask;
 	buf |= value;
 
-	write_reg(reg, buf);
+	spi_write_reg(cs_pin, reg, buf);
 }
 
-void read_regs(uint8_t reg, uint8_t *buf, uint16_t len) {
+void spi_read_regs(uint16_t cs_pin, uint8_t reg, uint8_t *buf, uint16_t len) {
 	reg |= READ_BIT;
 
 	gpio_put(LSM_PIN_CS, 0);
