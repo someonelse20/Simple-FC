@@ -42,7 +42,9 @@ void MMC5983MA_reset() {
 }
 
 void MMC5983MA_set_ODR(uint8_t ODR) {
-	write_mask(CTRL1, MMC_ODR_800, 0b11111100);
+	if (ODR < MMC_ODR_0200) {
+	
+	}
 }
 
 void MMC5983MA_set_scale(uint8_t scale) {
@@ -91,5 +93,8 @@ static void read_regs(uint8_t reg, uint8_t *buf, uint16_t len) {
 static void set_conf() {
 	// Enable IRQ and auto set/reset
 	write_reg(CTRL0, 0b00100100);
+
+	// Set bandwith to 800Hz
+	write_mask(CTRL1, MMC_BW_800, 0b11111100);
 }
 
